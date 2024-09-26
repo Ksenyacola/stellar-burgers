@@ -1,21 +1,31 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
+import { useAppSelector, useAppDispatch } from '../../services/store'; // Импортируем типизированные хуки
+import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { fetchOrderByNumberThunk } from '../../services/slices/orderSlice';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const dispatch = useAppDispatch();
+  const { number } = useParams<{ number: string }>(); // Получаем номер заказа из URL
 
-  const ingredients: TIngredient[] = [];
+  // Получаем список ингредиентов из хранилища
+  const ingredients = useAppSelector((state) => state.ingredients.ingredients);
+
+  // Получаем данные заказа из хранилища
+  const orderData = useAppSelector((state) =>
+    state.order.orderData && state.order.orderData.number === Number(number)
+      ? state.order.orderData
+      : null
+  );
+
+  // Если заказа нет в хранилище, загружаем его
+  useEffect(() => {
+    if (!orderData && number) {
+      dispatch(fetchOrderByNumberThunk(Number(number)));
+    }
+  }, [dispatch, number, orderData]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
@@ -28,22 +38,22 @@ export const OrderInfo: FC = () => {
     };
 
     const ingredientsInfo = orderData.ingredients.reduce(
-      (acc: TIngredientsWithCount, item) => {
-        if (!acc[item]) {
-          const ingredient = ingredients.find((ing) => ing._id === item);
+      (acc: TIngredientsWithCount, itemId) => {
+        if (!acc[itemId]) {
+          const ingredient = ingredients.find((ing) => ing._id === itemId);
           if (ingredient) {
-            acc[item] = {
+            acc[itemId] = {
               ...ingredient,
               count: 1
             };
           }
         } else {
-          acc[item].count++;
+          acc[itemId].count++;
         }
 
         return acc;
       },
-      {}
+      {} as TIngredientsWithCount
     );
 
     const total = Object.values(ingredientsInfo).reduce(

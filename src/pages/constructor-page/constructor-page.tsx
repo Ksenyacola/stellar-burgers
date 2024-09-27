@@ -1,19 +1,18 @@
+import { FC } from 'react';
 import { useAppSelector } from '../../services/store';
-
 import styles from './constructor-page.module.css';
-
 import { BurgerIngredientsContainer } from '../../components';
 import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
-import { FC } from 'react';
+import { selectIngredients } from '../../services/slices/ingredientSlice'; // Импортируем селектор для ингредиентов
 
 export const ConstructorPage: FC = () => {
-  /** TODO: взять переменную из стора */
-  const isIngredientsLoading = false;
+  // Получаем состояние ингредиентов и состояние загрузки из Redux
+  const { isLoading } = useAppSelector(selectIngredients);
 
   return (
     <>
-      {isIngredientsLoading ? (
+      {isLoading ? ( // Используем состояние загрузки из Redux
         <Preloader />
       ) : (
         <main className={styles.containerMain}>
@@ -23,6 +22,7 @@ export const ConstructorPage: FC = () => {
             Соберите бургер
           </h1>
           <div className={`${styles.main} pl-5 pr-5`}>
+            {/* Отображаем контейнер ингредиентов и конструктор */}
             <BurgerIngredientsContainer />
             <BurgerConstructor />
           </div>

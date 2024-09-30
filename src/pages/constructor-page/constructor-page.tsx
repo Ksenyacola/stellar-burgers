@@ -1,13 +1,14 @@
 import { FC } from 'react';
 import { useAppSelector } from '../../services/store';
 import styles from './constructor-page.module.css';
+
 import { BurgerIngredientsContainer } from '../../components';
 import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
 import { selectIngredients } from '../../services/slices/ingredientSlice';
 
 export const ConstructorPage: FC = () => {
-  const { isLoading } = useAppSelector(selectIngredients);
+  const { isLoading } = useAppSelector((state) => state.ingredients);
 
   return (
     <>

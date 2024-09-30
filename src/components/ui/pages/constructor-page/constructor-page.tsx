@@ -1,4 +1,3 @@
-// constructor-page.tsx
 import { useAppSelector } from '../../../../services/store';
 import styles from './constructor-page.module.css';
 import { BurgerIngredientsContainer } from '../../../../components';

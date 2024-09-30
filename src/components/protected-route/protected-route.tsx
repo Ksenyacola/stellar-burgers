@@ -5,14 +5,14 @@ import { useAppSelector } from '../../services/store';
 import { Preloader } from '@ui';
 
 type TProtectedRouteProps = {
-  AuthUser?: boolean;
-  component: React.JSX.Element;
+  onlyUnAuth?: boolean;
+  component: React.ReactElement;
 };
 
 export const ProtectedRoute: FC<TProtectedRouteProps> = ({
-  AuthUser = false,
+  onlyUnAuth = false,
   component
-}): React.JSX.Element => {
+}): React.ReactElement => {
   const user = useAppSelector(getUser);
   const isAuthChecked = useAppSelector(getIsAuthChecked);
   const location = useLocation();
@@ -21,11 +21,11 @@ export const ProtectedRoute: FC<TProtectedRouteProps> = ({
     return <Preloader />;
   }
 
-  if (!AuthUser && !user) {
+  if (!onlyUnAuth && !user) {
     return <Navigate to='/login' state={{ from: location }} />;
   }
 
-  if (AuthUser && user) {
+  if (onlyUnAuth && user) {
     const from = (location.state as { from?: Location })?.from?.pathname || '/';
     return <Navigate to={from} />;
   }
@@ -33,10 +33,10 @@ export const ProtectedRoute: FC<TProtectedRouteProps> = ({
   return component;
 };
 
-export const OnlyAuth = (props: { component: React.JSX.Element }) => (
+export const OnlyAuth = (props: { component: React.ReactElement }) => (
   <ProtectedRoute {...props} />
 );
 
-export const AuthUser = (props: { component: React.JSX.Element }) => (
-  <ProtectedRoute AuthUser {...props} />
+export const AuthUser = (props: { component: React.ReactElement }) => (
+  <ProtectedRoute onlyUnAuth {...props} />
 );

@@ -8,11 +8,14 @@ import { selectIngredients } from '../../services/slices/ingredientSlice';
 export const BurgerIngredientsContainer: FC = () => {
   const { ingredients } = useAppSelector(selectIngredients);
 
-  const buns = ingredients.filter((item) => item.type === 'bun');
-  const mains = ingredients.filter((item) => item.type === 'main');
-  const sauces = ingredients.filter((item) => item.type === 'sauce');
+  const buns = ingredients.filter((item: TIngredient) => item.type === 'bun');
+  const mains = ingredients.filter((item: TIngredient) => item.type === 'main');
+  const sauces = ingredients.filter(
+    (item: TIngredient) => item.type === 'sauce'
+  );
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
+
   const titleBunRef = useRef<HTMLHeadingElement>(null);
   const titleMainRef = useRef<HTMLHeadingElement>(null);
   const titleSaucesRef = useRef<HTMLHeadingElement>(null);
@@ -33,15 +36,12 @@ export const BurgerIngredientsContainer: FC = () => {
 
   const onTabClick = (tab: string) => {
     setCurrentTab(tab as TTabMode);
-    if (tab === 'bun') {
+    if (tab === 'bun')
       titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-    if (tab === 'main') {
+    if (tab === 'main')
       titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-    if (tab === 'sauce') {
+    if (tab === 'sauce')
       titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   return (

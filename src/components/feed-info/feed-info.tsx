@@ -14,9 +14,14 @@ export const FeedInfo: FC = () => {
   const orders: TOrder[] = useSelector(
     (state: RootState) => state.feeds.orders
   );
-  const feed = useSelector((state: RootState) => state.feeds);
+
+  const feed = {
+    total: useSelector((state: RootState) => state.feeds.total),
+    totalToday: useSelector((state: RootState) => state.feeds.totalToday)
+  };
 
   const readyOrders = getOrders(orders, 'done');
+
   const pendingOrders = getOrders(orders, 'pending');
 
   return (

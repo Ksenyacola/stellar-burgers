@@ -6,12 +6,16 @@ import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { fetchOrderByNumberThunk } from '../../services/slices/orderSlice';
 
+type TIngredientsWithCount = {
+  [key: string]: TIngredient & { count: number };
+};
+
 export const OrderInfo: FC = () => {
   const dispatch = useAppDispatch();
+
   const { number } = useParams<{ number: string }>();
 
   const ingredients = useAppSelector((state) => state.ingredients.ingredients);
-
   const orderData = useAppSelector((state) =>
     state.order.orderData && state.order.orderData.number === Number(number)
       ? state.order.orderData
@@ -29,10 +33,6 @@ export const OrderInfo: FC = () => {
 
     const date = new Date(orderData.createdAt);
 
-    type TIngredientsWithCount = {
-      [key: string]: TIngredient & { count: number };
-    };
-
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, itemId) => {
         if (!acc[itemId]) {
@@ -46,7 +46,6 @@ export const OrderInfo: FC = () => {
         } else {
           acc[itemId].count++;
         }
-
         return acc;
       },
       {} as TIngredientsWithCount

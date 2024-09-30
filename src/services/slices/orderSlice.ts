@@ -1,5 +1,5 @@
 import { getOrderByNumberApi, orderBurgerApi } from '@api';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
 import { RootState } from '../store';
 
@@ -47,10 +47,13 @@ export const orderSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(createOrderThunk.fulfilled, (state, action) => {
-        state.orderData = action.payload;
-        state.isLoading = false;
-      })
+      .addCase(
+        createOrderThunk.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.orderData = action.payload;
+          state.isLoading = false;
+        }
+      )
       .addCase(createOrderThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Не удалось создать заказ';
@@ -59,10 +62,13 @@ export const orderSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchOrderByNumberThunk.fulfilled, (state, action) => {
-        state.orderData = action.payload;
-        state.isLoading = false;
-      })
+      .addCase(
+        fetchOrderByNumberThunk.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.orderData = action.payload;
+          state.isLoading = false;
+        }
+      )
       .addCase(fetchOrderByNumberThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Не удалось получить заказ';
@@ -75,4 +81,5 @@ export const selectOrderLoading = (state: RootState) => state.order.isLoading;
 export const selectOrderError = (state: RootState) => state.order.error;
 
 export const { resetOrderState } = orderSlice.actions;
+
 export default orderSlice.reducer;

@@ -1,6 +1,6 @@
 import { FC, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAppSelector } from '../../services/store'; // Импортируем useAppSelector
+import { useAppSelector } from '../../services/store';
 import { TIngredient } from '@utils-types';
 import { OrderCardUI } from '../ui/order-card';
 import { OrderCardProps } from './type';
@@ -10,7 +10,6 @@ const maxIngredients = 6;
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const location = useLocation();
 
-  // Получаем список ингредиентов из хранилища
   const ingredients: TIngredient[] = useAppSelector(
     (state) => state.ingredients.ingredients
   );

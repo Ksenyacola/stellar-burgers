@@ -1,16 +1,16 @@
 import { FC, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../../services/store'; // Подключение селекторов и диспатча
+import { useAppDispatch, useAppSelector } from '../../../../services/store';
 import styles from './profile-orders.module.css';
 import { ProfileOrdersUIProps } from './type';
 import { ProfileMenu, OrdersList } from '@components';
-import { getUserOrdersThunk } from '../../../../services/slices/userSlice'; // Импорт Thunk
+import { getUserOrdersThunk } from '../../../../services/slices/userSlice';
 
 export const ProfileOrdersUI: FC<ProfileOrdersUIProps> = () => {
   const dispatch = useAppDispatch();
-  const orders = useAppSelector((state) => state.user.orders); // Получаем заказы пользователя
+  const orders = useAppSelector((state) => state.user.orders);
 
   useEffect(() => {
-    dispatch(getUserOrdersThunk()); // Диспатчим запрос на получение заказов
+    dispatch(getUserOrdersThunk());
   }, [dispatch]);
 
   return (

@@ -10,7 +10,7 @@ import {
 } from '@api';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TOrder, TUser } from '@utils-types';
-import { getCookie, setCookie } from '../../utils/cookie';
+import { getCookie, setCookie, deleteCookie } from '../../utils/cookie';
 import { RootState } from '../store';
 
 export const checkUserAuth = createAsyncThunk(
@@ -33,7 +33,6 @@ export const registerThunk = createAsyncThunk(
   'user/register',
   async ({ name, email, password }: TRegisterData) => {
     const registrationData = await registerUserApi({ name, email, password });
-
     setCookie('accessToken', registrationData.accessToken);
     localStorage.setItem('refreshToken', registrationData.refreshToken);
     return registrationData.user;
@@ -51,29 +50,40 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
-export const logoutThunk = createAsyncThunk('user/logout', logoutApi);
+export const logoutThunk = createAsyncThunk('user/logout', async () => {
+  await logoutApi();
+  deleteCookie('accessToken');
+  localStorage.removeItem('refreshToken');
+});
 
 export const getUserOrdersThunk = createAsyncThunk(
   'user/getOrders',
-  getOrdersApi
+  async () => {
+    const orders = await getOrdersApi();
+    return orders;
+  }
 );
 
 export const updateUserThunk = createAsyncThunk(
   'user/update',
-  async ({ email, name, password }: Partial<TRegisterData>) =>
-    updateUserApi({ email, name, password })
+  async ({ email, name, password }: Partial<TRegisterData>) => {
+    const updatedUser = await updateUserApi({ email, name, password });
+    return { user: updatedUser };
+  }
 );
 
 type TUserState = {
   user: TUser | null;
   isAuthChecked: boolean;
   orders: TOrder[];
+  error?: string | null;
 };
 
 const initialState: TUserState = {
   user: null,
   isAuthChecked: false,
-  orders: []
+  orders: [],
+  error: null
 };
 
 export const userSlice = createSlice({
@@ -88,27 +98,25 @@ export const userSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(loginThunk.fulfilled, (state, action) => {
-      state.user = action.payload;
-      state.isAuthChecked = true;
-    });
-
-    builder.addCase(registerThunk.fulfilled, (state, action) => {
-      state.user = action.payload;
-      state.isAuthChecked = true;
-    });
-
-    builder.addCase(logoutThunk.fulfilled, (state) => {
-      state.user = null;
-    });
-
-    builder.addCase(getUserOrdersThunk.fulfilled, (state, action) => {
-      state.orders = action.payload;
-    });
-
-    builder.addCase(updateUserThunk.fulfilled, (state, action) => {
-      state.user = action.payload.user;
-    });
+    builder
+      .addCase(loginThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthChecked = true;
+      })
+      .addCase(registerThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthChecked = true;
+      })
+      .addCase(logoutThunk.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthChecked = false;
+      })
+      .addCase(getUserOrdersThunk.fulfilled, (state, action) => {
+        state.orders = action.payload;
+      })
+      .addCase(updateUserThunk.fulfilled, (state, action) => {
+        state.error = null;
+      });
   }
 });
 
@@ -117,4 +125,5 @@ export const { setUser, setIsAuthChecked } = userSlice.actions;
 export const getIsAuthChecked = (state: RootState) => state.user.isAuthChecked;
 export const getUser = (state: RootState) => state.user.user;
 export const getUserOrders = (state: RootState) => state.user.orders;
+
 export default userSlice.reducer;

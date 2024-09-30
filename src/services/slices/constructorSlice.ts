@@ -24,7 +24,10 @@ export const burgerConstructorSlice = createSlice({
       reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
         if (action.payload.type === 'bun') {
           state.bun = action.payload;
-        } else {
+        } else if (
+          action.payload.type === 'main' ||
+          action.payload.type === 'sauce'
+        ) {
           if (!state.fillings.find((item) => item.id === action.payload.id)) {
             state.fillings.push(action.payload);
           }
@@ -72,6 +75,8 @@ export const burgerConstructorSlice = createSlice({
     resetConstructor: (state) => {
       state.bun = null;
       state.fillings = [];
+      state.sauce = [];
+      state.selectedBun = null;
     }
   }
 });
@@ -81,6 +86,7 @@ export const selectBurgerConstructor = (state: RootState) =>
 export const selectBun = (state: RootState) => state.burgerConstructor.bun;
 export const selectFillings = (state: RootState) =>
   state.burgerConstructor.fillings;
+export const selectSauce = (state: RootState) => state.burgerConstructor.sauce;
 export const selectTotalIngredients = (state: RootState) =>
   state.burgerConstructor.fillings.length +
   (state.burgerConstructor.bun ? 1 : 0);

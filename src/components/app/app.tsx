@@ -30,22 +30,18 @@ const App: FC = () => {
   const backgroundLocation = location.state?.background;
 
   useEffect(() => {
-    // Инициализация проверки авторизации пользователя и загрузка ингредиентов при загрузке приложения
     dispatch(checkUserAuth());
     dispatch(fetchIngredients());
   }, [dispatch]);
 
   return (
     <div className={styles.app}>
-      {/* Шапка приложения */}
       <AppHeader />
 
-      {/* Основные маршруты */}
       <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
 
-        {/* Маршруты для аутентификации и регистрации */}
         <Route path='/login' element={<AuthUser component={<Login />} />} />
         <Route
           path='/register'
@@ -60,7 +56,6 @@ const App: FC = () => {
           element={<AuthUser component={<ResetPassword />} />}
         />
 
-        {/* Защищенные маршруты для авторизованных пользователей */}
         <Route
           path='/profile'
           element={<ProtectedRoute component={<Profile />} />}
@@ -74,15 +69,12 @@ const App: FC = () => {
           element={<OnlyAuth component={<OrderInfo />} />}
         />
 
-        {/* Маршруты для просмотра заказов и ингредиентов */}
         <Route path='/feed/:number' element={<OrderInfo />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
 
-        {/* Маршрут для несуществующих страниц */}
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
-      {/* Модальные окна, отображаемые при наличии backgroundLocation */}
       {backgroundLocation && (
         <Routes>
           <Route

@@ -9,15 +9,28 @@ import {
   createOrderThunk,
   resetOrderState
 } from '../../services/slices/orderSlice';
+import { useNavigate } from 'react-router-dom';
+import { getUser } from '../../services/slices/userSlice';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const constructorItems = useAppSelector(selectBurgerConstructor);
+  const user = useAppSelector(getUser);
   const orderRequest = useAppSelector(selectOrderLoading);
   const orderModalData = useAppSelector(selectOrderData);
 
+  const closeOrderModal = () => {
+    dispatch(resetOrderState());
+  };
+
   const onOrderClick = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     if (!constructorItems.bun || orderRequest) return;
 
     const ingredientIds = [
@@ -27,10 +40,6 @@ export const BurgerConstructor: FC = () => {
     ];
 
     dispatch(createOrderThunk(ingredientIds));
-  };
-
-  const closeOrderModal = () => {
-    dispatch(resetOrderState());
   };
 
   const price = useMemo(() => {

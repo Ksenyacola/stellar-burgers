@@ -5,55 +5,54 @@ import { RootState } from '../store';
 
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
-  async () => {
-    const response = await getIngredientsApi();
-    return response; // Предполагается, что это массив ингредиентов
-  }
+  getIngredientsApi
 );
 
 type TIngredientsState = {
   ingredients: TIngredient[];
+  buns: TIngredient[];
+  mains: TIngredient[];
+  sauces: TIngredient[];
   isLoading: boolean;
   error?: string | null;
-  selectedIngredient: TIngredient | null;
 };
 
 const initialState: TIngredientsState = {
   ingredients: [],
+  buns: [],
+  mains: [],
+  sauces: [],
   isLoading: false,
-  error: null,
-  selectedIngredient: null
+  error: null
 };
 
 export const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
-  reducers: {
-    setSelectedIngredient: (
-      state,
-      action: PayloadAction<TIngredient | null>
-    ) => {
-      state.selectedIngredient = action.payload;
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchIngredients.fulfilled, (state, action) => {
-        state.ingredients = action.payload;
-        state.isLoading = false;
-      })
       .addCase(fetchIngredients.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+      })
+      .addCase(fetchIngredients.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.ingredients = action.payload;
+        if (action.payload) {
+          state.buns = action.payload.filter((ing) => ing.type === 'bun');
+          state.mains = action.payload.filter((ing) => ing.type === 'main');
+          state.sauces = action.payload.filter((ing) => ing.type === 'sauce');
+        }
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Failed to fetch ingredients';
+        state.error = action.error.message;
       });
   }
 });
 
 export const selectIngredients = (state: RootState) => state.ingredients;
-
-export default ingredientsSlice.reducer;
-export const { setSelectedIngredient } = ingredientsSlice.actions;
+export const selectAllIngredients = (state: RootState) => state.ingredients;
+export const ingredientsReducer = ingredientsSlice.reducer;
+export const selectIngredientsLoading = (state: RootState) =>
+  state.ingredients.isLoading;

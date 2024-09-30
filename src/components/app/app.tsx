@@ -16,7 +16,7 @@ import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import {
   OnlyAuth,
-  OnlyUnAuth,
+  AuthUser,
   ProtectedRoute
 } from '../protected-route/protected-route';
 import { useEffect } from 'react';
@@ -42,7 +42,7 @@ const App = () => {
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
 
-        <Route path='/login' element={<OnlyUnAuth component={<Login />} />} />
+        <Route path='/login' element={<AuthUser component={<Login />} />} />
         <Route
           path='/profile'
           element={<ProtectedRoute component={<Profile />} />}
@@ -53,15 +53,15 @@ const App = () => {
         />
         <Route
           path='/register'
-          element={<OnlyUnAuth component={<Register />} />}
+          element={<AuthUser component={<Register />} />}
         />
         <Route
           path='/forgot-password'
-          element={<OnlyUnAuth component={<ForgotPassword />} />}
+          element={<AuthUser component={<ForgotPassword />} />}
         />
         <Route
           path='/reset-password'
-          element={<OnlyUnAuth component={<ResetPassword />} />}
+          element={<AuthUser component={<ResetPassword />} />}
         />
 
         <Route path='*' element={<NotFound404 />} />

@@ -1,5 +1,5 @@
 import { FC, useMemo, useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '../../services/store'; // Импортируем типизированные хуки
+import { useAppSelector, useAppDispatch } from '../../services/store';
 import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
@@ -8,26 +8,22 @@ import { fetchOrderByNumberThunk } from '../../services/slices/orderSlice';
 
 export const OrderInfo: FC = () => {
   const dispatch = useAppDispatch();
-  const { number } = useParams<{ number: string }>(); // Получаем номер заказа из URL
+  const { number } = useParams<{ number: string }>();
 
-  // Получаем список ингредиентов из хранилища
   const ingredients = useAppSelector((state) => state.ingredients.ingredients);
 
-  // Получаем данные заказа из хранилища
   const orderData = useAppSelector((state) =>
     state.order.orderData && state.order.orderData.number === Number(number)
       ? state.order.orderData
       : null
   );
 
-  // Если заказа нет в хранилище, загружаем его
   useEffect(() => {
     if (!orderData && number) {
       dispatch(fetchOrderByNumberThunk(Number(number)));
     }
   }, [dispatch, number, orderData]);
 
-  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 

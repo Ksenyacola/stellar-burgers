@@ -1,4 +1,3 @@
-// components/burger-ingredients/burger-ingredients-container.tsx
 import { useState, useRef, useEffect, FC } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { TTabMode, TIngredient } from '@utils-types';
@@ -7,10 +6,8 @@ import { useAppSelector } from '../../services/store';
 import { selectIngredients } from '../../services/slices/ingredientSlice';
 
 export const BurgerIngredientsContainer: FC = () => {
-  // Получаем данные ингредиентов из стора
   const { ingredients } = useAppSelector(selectIngredients);
 
-  // Разбиваем ингредиенты на категории
   const buns = ingredients.filter((item) => item.type === 'bun');
   const mains = ingredients.filter((item) => item.type === 'main');
   const sauces = ingredients.filter((item) => item.type === 'sauce');

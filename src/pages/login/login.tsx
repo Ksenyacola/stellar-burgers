@@ -22,10 +22,6 @@ export const Login: FC = () => {
 
   const isAuth = useAppSelector((state) => state.user.isAuthChecked);
 
-  if (isAuth) {
-    return <ConstructorPage />;
-  }
-
   return (
     <LoginUI
       errorText=''

@@ -3,16 +3,17 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
-import { RootState } from '../../services/store';
-import { TIngredient } from '../../utils/types';
+import { TIngredient } from '@utils-types';
+import { RootState } from 'src/services/store';
+
+const selectIngredientList = (state: RootState) =>
+  state.ingredients.ingredients;
 
 export const IngredientDetails: FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const ingredients = useSelector(
-    (state: RootState) => state.ingredients.ingredients
-  );
+  const ingredients = useSelector(selectIngredientList);
 
-  // Ищем ингредиент по id
+  const { id } = useParams<{ id: string }>();
+
   const ingredientData = ingredients.find(
     (item: TIngredient) => item._id === id
   );

@@ -5,7 +5,10 @@ import { RootState } from '../store';
 
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
-  getIngredientsApi
+  async () => {
+    const response = await getIngredientsApi();
+    return response; // Предполагается, что это массив ингредиентов
+  }
 );
 
 type TIngredientsState = {

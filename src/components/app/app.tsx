@@ -11,46 +11,42 @@ import {
 } from '@pages';
 import '../../index.css';
 import styles from './app.module.css';
-
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { FC, useEffect } from 'react';
+import { useAppDispatch } from '../../services/store';
+import { checkUserAuth } from '../../services/slices/userSlice';
+import { fetchIngredients } from '../../services/slices/ingredientSlice';
 import {
   OnlyAuth,
   AuthUser,
   ProtectedRoute
 } from '../protected-route/protected-route';
-import { useEffect } from 'react';
-import { useAppDispatch } from '../../services/store';
-import { checkUserAuth } from '../../services/slices/userSlice';
-import { fetchIngredients } from '../../services/slices/ingredientSlice';
 
-const App = () => {
+const App: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const location = useLocation();
   const backgroundLocation = location.state?.background;
 
   useEffect(() => {
+    // Инициализация проверки авторизации пользователя и загрузка ингредиентов при загрузке приложения
     dispatch(checkUserAuth());
     dispatch(fetchIngredients());
   }, [dispatch]);
 
   return (
     <div className={styles.app}>
+      {/* Шапка приложения */}
       <AppHeader />
+
+      {/* Основные маршруты */}
       <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
 
+        {/* Маршруты для аутентификации и регистрации */}
         <Route path='/login' element={<AuthUser component={<Login />} />} />
-        <Route
-          path='/profile'
-          element={<ProtectedRoute component={<Profile />} />}
-        />
-        <Route
-          path='/profile/orders'
-          element={<OnlyAuth component={<ProfileOrders />} />}
-        />
         <Route
           path='/register'
           element={<AuthUser component={<Register />} />}
@@ -64,16 +60,29 @@ const App = () => {
           element={<AuthUser component={<ResetPassword />} />}
         />
 
-        <Route path='*' element={<NotFound404 />} />
-
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        {/* Защищенные маршруты для авторизованных пользователей */}
+        <Route
+          path='/profile'
+          element={<ProtectedRoute component={<Profile />} />}
+        />
+        <Route
+          path='/profile/orders'
+          element={<OnlyAuth component={<ProfileOrders />} />}
+        />
         <Route
           path='/profile/orders/:number'
           element={<OnlyAuth component={<OrderInfo />} />}
         />
+
+        {/* Маршруты для просмотра заказов и ингредиентов */}
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+
+        {/* Маршрут для несуществующих страниц */}
+        <Route path='*' element={<NotFound404 />} />
       </Routes>
 
+      {/* Модальные окна, отображаемые при наличии backgroundLocation */}
       {backgroundLocation && (
         <Routes>
           <Route
@@ -92,7 +101,6 @@ const App = () => {
               </Modal>
             }
           />
-
           <Route
             path='/profile/orders/:number'
             element={

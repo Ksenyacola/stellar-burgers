@@ -1,26 +1,22 @@
-import { FC, useMemo, useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '../../services/store';
-import { useParams } from 'react-router-dom';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useAppDispatch, useAppSelector } from '../../services/store';
 import { fetchOrderByNumberThunk } from '../../services/slices/orderSlice';
-
-type TIngredientsWithCount = {
-  [key: string]: TIngredient & { count: number };
-};
+import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
   const dispatch = useAppDispatch();
-
   const { number } = useParams<{ number: string }>();
 
-  const ingredients = useAppSelector((state) => state.ingredients.ingredients);
   const orderData = useAppSelector((state) =>
     state.order.orderData && state.order.orderData.number === Number(number)
       ? state.order.orderData
       : null
   );
+
+  const ingredients = useAppSelector((state) => state.ingredients.ingredients);
 
   useEffect(() => {
     if (!orderData && number) {
@@ -32,6 +28,10 @@ export const OrderInfo: FC = () => {
     if (!orderData || !ingredients.length) return null;
 
     const date = new Date(orderData.createdAt);
+
+    type TIngredientsWithCount = {
+      [key: string]: TIngredient & { count: number };
+    };
 
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, itemId) => {

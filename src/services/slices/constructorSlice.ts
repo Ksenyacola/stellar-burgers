@@ -4,16 +4,18 @@ import { RootState } from '../store';
 
 type TBurgerConstructorState = {
   bun: TConstructorIngredient | null;
-  fillings: TConstructorIngredient[];
+  mains: TConstructorIngredient[];
   sauce: TConstructorIngredient[];
   selectedBun: TConstructorIngredient | null;
+  ingredients: TConstructorIngredient[];
 };
 
 const initialState: TBurgerConstructorState = {
   bun: null,
-  fillings: [],
+  mains: [],
   sauce: [],
-  selectedBun: null
+  selectedBun: null,
+  ingredients: []
 };
 
 export const burgerConstructorSlice = createSlice({
@@ -28,8 +30,8 @@ export const burgerConstructorSlice = createSlice({
           action.payload.type === 'main' ||
           action.payload.type === 'sauce'
         ) {
-          if (!state.fillings.find((item) => item.id === action.payload.id)) {
-            state.fillings.push(action.payload);
+          if (!state.mains.find((item) => item.id === action.payload.id)) {
+            state.mains = [...state.mains, action.payload];
           }
         }
       },
@@ -40,9 +42,7 @@ export const burgerConstructorSlice = createSlice({
     },
 
     removeIngredient: (state, action: PayloadAction<string>) => {
-      state.fillings = state.fillings.filter(
-        (item) => item.id !== action.payload
-      );
+      state.mains = state.mains.filter((item) => item.id !== action.payload);
     },
 
     moveIngredient: (
@@ -50,7 +50,7 @@ export const burgerConstructorSlice = createSlice({
       action: PayloadAction<{ id: string; moveDirection: 'up' | 'down' }>
     ) => {
       const { id, moveDirection } = action.payload;
-      const index = state.fillings.findIndex((item) => item.id === id);
+      const index = state.mains.findIndex((item) => item.id === id);
 
       if (index === -1) return;
 
@@ -63,18 +63,15 @@ export const burgerConstructorSlice = createSlice({
       };
 
       if (moveDirection === 'up' && index > 0) {
-        swap(state.fillings, index, index - 1);
-      } else if (
-        moveDirection === 'down' &&
-        index < state.fillings.length - 1
-      ) {
-        swap(state.fillings, index, index + 1);
+        swap(state.mains, index, index - 1);
+      } else if (moveDirection === 'down' && index < state.mains.length - 1) {
+        swap(state.mains, index, index + 1);
       }
     },
 
     resetConstructor: (state) => {
       state.bun = null;
-      state.fillings = [];
+      state.mains = [];
       state.sauce = [];
       state.selectedBun = null;
     }
@@ -85,11 +82,10 @@ export const selectBurgerConstructor = (state: RootState) =>
   state.burgerConstructor;
 export const selectBun = (state: RootState) => state.burgerConstructor.bun;
 export const selectFillings = (state: RootState) =>
-  state.burgerConstructor.fillings;
+  state.burgerConstructor.mains;
 export const selectSauce = (state: RootState) => state.burgerConstructor.sauce;
 export const selectTotalIngredients = (state: RootState) =>
-  state.burgerConstructor.fillings.length +
-  (state.burgerConstructor.bun ? 1 : 0);
+  state.burgerConstructor.mains.length + (state.burgerConstructor.bun ? 1 : 0);
 
 export const {
   addIngredient,

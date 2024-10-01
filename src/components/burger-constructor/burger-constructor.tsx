@@ -1,8 +1,11 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { selectBurgerConstructor } from '../../services/slices/constructorSlice';
+import {
+  selectBurgerConstructor,
+  resetConstructor
+} from '../../services/slices/constructorSlice';
 import {
   selectOrderLoading,
   selectOrderData,
@@ -23,10 +26,15 @@ export const BurgerConstructor: FC = () => {
 
   const closeOrderModal = () => {
     dispatch(resetOrderState());
+    dispatch(resetConstructor());
   };
 
   const onOrderClick = () => {
     if (!user) {
+      localStorage.setItem(
+        'constructorItems',
+        JSON.stringify(constructorItems)
+      );
       navigate('/login');
       return;
     }
@@ -35,16 +43,25 @@ export const BurgerConstructor: FC = () => {
 
     const ingredientIds = [
       constructorItems.bun._id,
-      ...constructorItems.fillings.map((item) => item._id),
+      ...constructorItems.mains.map((item) => item._id),
       constructorItems.bun._id
     ];
 
     dispatch(createOrderThunk(ingredientIds));
   };
 
+  useEffect(() => {
+    const savedConstructorItems = localStorage.getItem('constructorItems');
+    if (savedConstructorItems && !user) {
+      dispatch(resetConstructor(JSON.parse(savedConstructorItems)));
+      localStorage.removeItem('constructorItems');
+    }
+    dispatch(resetOrderState());
+  }, [user, dispatch]);
+
   const price = useMemo(() => {
     const bunPrice = constructorItems.bun ? constructorItems.bun.price * 2 : 0;
-    const fillingsPrice = constructorItems.fillings.reduce(
+    const fillingsPrice = constructorItems.mains.reduce(
       (sum: number, item: TConstructorIngredient) => sum + item.price,
       0
     );

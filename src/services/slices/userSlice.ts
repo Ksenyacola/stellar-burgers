@@ -109,7 +109,7 @@ export const userSlice = createSlice({
       })
       .addCase(logoutThunk.fulfilled, (state) => {
         state.user = null;
-        state.isAuthChecked = false;
+        state.isAuthChecked = true;
       })
       .addCase(getUserOrdersThunk.fulfilled, (state, action) => {
         state.orders = action.payload;

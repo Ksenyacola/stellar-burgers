@@ -1,3 +1,8 @@
+import React, { FC, useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import '../../index.css';
+import styles from './app.module.css';
+import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import {
   ConstructorPage,
   Feed,
@@ -9,11 +14,6 @@ import {
   Register,
   ResetPassword
 } from '@pages';
-import '../../index.css';
-import styles from './app.module.css';
-import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { FC, useEffect } from 'react';
 import { useAppDispatch } from '../../services/store';
 import { checkUserAuth } from '../../services/slices/userSlice';
 import { fetchIngredients } from '../../services/slices/ingredientSlice';
@@ -38,10 +38,10 @@ const App: FC = () => {
     <div className={styles.app}>
       <AppHeader />
 
+      {/* Основные маршруты приложения */}
       <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
-
         <Route path='/login' element={<AuthUser component={<Login />} />} />
         <Route
           path='/register'
@@ -69,8 +69,29 @@ const App: FC = () => {
           element={<OnlyAuth component={<OrderInfo />} />}
         />
 
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route
+          path='/feed/:number'
+          element={
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main-large ${styles.detailHeader}`}>
+                Детали заказа
+              </p>
+              <OrderInfo />
+            </div>
+          }
+        />
+
+        <Route
+          path='/ingredients/:id'
+          element={
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main-large ${styles.detailHeader}`}>
+                Детали ингредиента
+              </p>
+              <IngredientDetails />
+            </div>
+          }
+        />
 
         <Route path='*' element={<NotFound404 />} />
       </Routes>
@@ -80,11 +101,12 @@ const App: FC = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Заказ' onClose={() => navigate(-1)}>
+              <Modal title='Детали заказа' onClose={() => navigate(-1)}>
                 <OrderInfo />
               </Modal>
             }
           />
+
           <Route
             path='/ingredients/:id'
             element={
@@ -93,16 +115,13 @@ const App: FC = () => {
               </Modal>
             }
           />
+
           <Route
             path='/profile/orders/:number'
             element={
-              <OnlyAuth
-                component={
-                  <Modal title='О заказе' onClose={() => navigate(-1)}>
-                    <OrderInfo />
-                  </Modal>
-                }
-              />
+              <Modal title='О заказе' onClose={() => navigate(-1)}>
+                <OrderInfo />
+              </Modal>
             }
           />
         </Routes>

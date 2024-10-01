@@ -21,5 +21,9 @@ export const OrderStatus: FC<OrderStatusProps> = ({ status }) => {
       textStyle = '#F2F2F3';
   }
 
-  return <OrderStatusUI textStyle={textStyle} text={statusText[textStyle]} />;
+  return (
+    <p style={{ color: textStyle }} className='text text_type_main-default'>
+      {statusText[status] || 'Неизвестный статус'}
+    </p>
+  );
 };

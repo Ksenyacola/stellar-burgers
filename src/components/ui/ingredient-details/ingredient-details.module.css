@@ -5,6 +5,8 @@
   align-items: center;
   text-align: center;
   width: 520px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .nutritional_values {

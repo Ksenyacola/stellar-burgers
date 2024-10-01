@@ -11,10 +11,10 @@ export const IngredientsCategory = forwardRef<
   const burgerConstructor = useAppSelector((state) => state.burgerConstructor);
 
   const ingredientsCounters = useMemo(() => {
-    const { bun, fillings } = burgerConstructor;
+    const { bun, mains } = burgerConstructor;
     const counters: { [key: string]: number } = {};
 
-    fillings.forEach((ingredient: TConstructorIngredient) => {
+    mains.forEach((ingredient: TConstructorIngredient) => {
       if (!counters[ingredient._id]) counters[ingredient._id] = 0;
       counters[ingredient._id]++;
     });

@@ -38,7 +38,6 @@ const App: FC = () => {
     <div className={styles.app}>
       <AppHeader />
 
-      {/* Основные маршруты приложения */}
       <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />

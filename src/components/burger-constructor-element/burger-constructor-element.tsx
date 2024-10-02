@@ -3,29 +3,33 @@ import { useAppDispatch } from '../../services/store';
 import { BurgerConstructorElementUI } from '@ui';
 import {
   moveIngredient,
-  removeIngredient
+  removeIngredient,
+  selectBurgerConstructor
 } from '../../services/slices/constructorSlice';
 import { BurgerConstructorElementProps } from './type';
+import { useAppSelector } from '../../services/store';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
-  ({ ingredient, index, totalItems }) => {
+  ({ ingredient, index }) => {
     const dispatch = useAppDispatch();
+    const constructorItems = useAppSelector(selectBurgerConstructor);
+    const totalItems = constructorItems.mains.length;
 
-    const handleMoveUp = useCallback(() => {
-      if (index > 0) {
-        dispatch(moveIngredient({ id: ingredient.id, moveDirection: 'up' }));
-      }
-    }, [dispatch, index, ingredient.id]);
+    const handleMoveDown = () => {
+      dispatch(
+        moveIngredient({ fromIngredient: index, toIngredient: index + 1 })
+      );
+    };
 
-    const handleMoveDown = useCallback(() => {
-      if (index < totalItems - 1) {
-        dispatch(moveIngredient({ id: ingredient.id, moveDirection: 'down' }));
-      }
-    }, [dispatch, index, totalItems, ingredient.id]);
+    const handleMoveUp = () => {
+      dispatch(
+        moveIngredient({ fromIngredient: index, toIngredient: index - 1 })
+      );
+    };
 
-    const handleClose = useCallback(() => {
+    const handleClose = () => {
       dispatch(removeIngredient(ingredient.id));
-    }, [dispatch, ingredient.id]);
+    };
 
     return (
       <BurgerConstructorElementUI

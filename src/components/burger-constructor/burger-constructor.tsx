@@ -38,8 +38,8 @@ export const BurgerConstructor: FC = () => {
       navigate('/login');
       return;
     }
-
-    if (!constructorItems.bun || orderRequest) return;
+    if (!constructorItems.bun || orderRequest || !constructorItems.mains.length)
+      return;
 
     const ingredientIds = [
       constructorItems.bun._id,

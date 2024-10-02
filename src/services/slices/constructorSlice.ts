@@ -47,26 +47,14 @@ export const burgerConstructorSlice = createSlice({
 
     moveIngredient: (
       state,
-      action: PayloadAction<{ id: string; moveDirection: 'up' | 'down' }>
+      action: PayloadAction<{ fromIngredient: number; toIngredient: number }>
     ) => {
-      const { id, moveDirection } = action.payload;
-      const index = state.mains.findIndex((item) => item.id === id);
+      const { fromIngredient, toIngredient } = action.payload;
 
-      if (index === -1) return;
+      if (toIngredient < 0 || toIngredient >= state.mains.length) return;
 
-      const swap = (
-        arr: TConstructorIngredient[],
-        index1: number,
-        index2: number
-      ) => {
-        [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
-      };
-
-      if (moveDirection === 'up' && index > 0) {
-        swap(state.mains, index, index - 1);
-      } else if (moveDirection === 'down' && index < state.mains.length - 1) {
-        swap(state.mains, index, index + 1);
-      }
+      const movedItem = state.mains.splice(fromIngredient, 1)[0];
+      state.mains.splice(toIngredient, 0, movedItem);
     },
 
     resetConstructor: (state) => {

@@ -1,8 +1,17 @@
 import React, { FC, useEffect } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useMatch
+} from 'react-router-dom';
+
 import '../../index.css';
 import styles from './app.module.css';
-import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
+import { AppHeader, IngredientDetails, Modal } from '@components';
+import { OrderInfo } from '../order-info/order-info';
+
 import {
   ConstructorPage,
   Feed,
@@ -14,9 +23,11 @@ import {
   Register,
   ResetPassword
 } from '@pages';
+
 import { useAppDispatch } from '../../services/store';
 import { checkUserAuth } from '../../services/slices/userSlice';
 import { fetchIngredients } from '../../services/slices/ingredientSlice';
+
 import {
   OnlyAuth,
   AuthUser,
@@ -28,6 +39,11 @@ const App: FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const backgroundLocation = location.state?.background;
+
+  const profileOrderNumber = useMatch('/profile/orders/:number')?.params.number;
+  const feedOrderNumber = useMatch('/feed/:number')?.params.number;
+
+  const number = profileOrderNumber || feedOrderNumber;
 
   useEffect(() => {
     dispatch(checkUserAuth());
@@ -73,7 +89,7 @@ const App: FC = () => {
           element={
             <div className={styles.detailPageWrap}>
               <p className={`text text_type_main-large ${styles.detailHeader}`}>
-                Детали заказа
+                #{number ? number.padStart(6, '0') : 'неизвестный'}
               </p>
               <OrderInfo />
             </div>
@@ -100,7 +116,12 @@ const App: FC = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Детали заказа' onClose={() => navigate(-1)}>
+              <Modal
+                title={`#${number && number.padStart(6, '0')}`}
+                onClose={() => {
+                  navigate(-1);
+                }}
+              >
                 <OrderInfo />
               </Modal>
             }
@@ -118,7 +139,12 @@ const App: FC = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='О заказе' onClose={() => navigate(-1)}>
+              <Modal
+                title={`#${number && number.padStart(6, '0')}`}
+                onClose={() => {
+                  navigate(-1);
+                }}
+              >
                 <OrderInfo />
               </Modal>
             }

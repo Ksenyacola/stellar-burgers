@@ -8,7 +8,7 @@ export const fetchIngredients = createAsyncThunk(
   getIngredientsApi
 );
 
-type TIngredientsState = {
+export type TIngredientsState = {
   ingredients: TIngredient[];
   buns: TIngredient[];
   mains: TIngredient[];
@@ -17,7 +17,7 @@ type TIngredientsState = {
   error?: string | null;
 };
 
-const initialState: TIngredientsState = {
+export const initialState: TIngredientsState = {
   ingredients: [],
   buns: [],
   mains: [],

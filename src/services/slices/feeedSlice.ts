@@ -3,14 +3,25 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TOrder, TIngredient } from '@utils-types';
 import { RootState } from '../store';
 
-export const fetchFeeds = createAsyncThunk('feeds/fetchFeeds', getFeedsApi);
+export const fetchFeeds = createAsyncThunk<
+  { success: boolean; total: number; totalToday: number; orders: TOrder[] }, // Тип возвращаемых данных
+  void, // Тип аргументов
+  { rejectValue: string } // Тип ошибки, возвращаемой при reject
+>('feeds/fetchFeeds', async (_, { rejectWithValue }) => {
+  try {
+    const response = await getFeedsApi();
+    return response;
+  } catch (error) {
+    return rejectWithValue('Ошибка получения фидов');
+  }
+});
 
 export const getOrderByNumber = createAsyncThunk(
   'order/getOrderByNumber',
   getOrderByNumberApi
 );
 
-type TFeedsState = {
+export type TFeedsState = {
   order: TOrder | null;
   ingredients: TIngredient[];
   orders: TOrder[];
@@ -20,7 +31,7 @@ type TFeedsState = {
   error: string | null | undefined;
 };
 
-const initialState: TFeedsState = {
+export const initialState: TFeedsState = {
   order: null,
   orders: [],
   ingredients: [],

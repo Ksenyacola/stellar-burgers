@@ -3,14 +3,25 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TOrder, TIngredient } from '@utils-types';
 import { RootState } from '../store';
 
-export const fetchFeeds = createAsyncThunk('feeds/fetchFeeds', getFeedsApi);
+export const fetchFeeds = createAsyncThunk<
+  { success: boolean; total: number; totalToday: number; orders: TOrder[] },
+  void,
+  { rejectValue: string }
+>('feeds/fetchFeeds', async (_, { rejectWithValue }) => {
+  try {
+    const response = await getFeedsApi();
+    return response;
+  } catch (error) {
+    return rejectWithValue('Ошибка получения фидов');
+  }
+});
 
 export const getOrderByNumber = createAsyncThunk(
   'order/getOrderByNumber',
   getOrderByNumberApi
 );
 
-type TFeedsState = {
+export type TFeedsState = {
   order: TOrder | null;
   ingredients: TIngredient[];
   orders: TOrder[];
@@ -20,7 +31,7 @@ type TFeedsState = {
   error: string | null | undefined;
 };
 
-const initialState: TFeedsState = {
+export const initialState: TFeedsState = {
   order: null,
   orders: [],
   ingredients: [],
@@ -61,8 +72,8 @@ export const feedsSlice = createSlice({
         state.order = action.payload.orders[0];
       })
       .addCase(getOrderByNumber.rejected, (state, action) => {
+        state.error = action.error.message || 'Ошибка загрузки заказа';
         state.isLoading = false;
-        state.error = action.error.message;
       });
   }
 });

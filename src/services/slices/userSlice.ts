@@ -68,7 +68,7 @@ export const updateUserThunk = createAsyncThunk(
   'user/update',
   async ({ email, name, password }: Partial<TRegisterData>) => {
     const updatedUser = await updateUserApi({ email, name, password });
-    return { user: updatedUser };
+    return updatedUser.user;
   }
 );
 
@@ -99,23 +99,48 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginThunk.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isAuthChecked = true;
+      .addCase(registerThunk.pending, (state) => {
+        state.error = null;
       })
       .addCase(registerThunk.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthChecked = true;
+        state.error = null;
+      })
+      .addCase(registerThunk.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(loginThunk.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(loginThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthChecked = true;
+        state.error = null;
+      })
+      .addCase(loginThunk.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(updateUserThunk.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateUserThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(updateUserThunk.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(logoutThunk.pending, (state) => {
+        state.error = null;
       })
       .addCase(logoutThunk.fulfilled, (state) => {
         state.user = null;
         state.isAuthChecked = true;
-      })
-      .addCase(getUserOrdersThunk.fulfilled, (state, action) => {
-        state.orders = action.payload;
-      })
-      .addCase(updateUserThunk.fulfilled, (state, action) => {
         state.error = null;
+      })
+      .addCase(logoutThunk.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   }
 });

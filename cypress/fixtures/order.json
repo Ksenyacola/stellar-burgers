@@ -3,11 +3,11 @@
     "order": {
       "_id": "testId",
       "status": "true",
-      "name": "testName",
+      "name": "meow meo",
       "createdAt": "testCreated",
       "updatedAt": "testUpdate",
       "number": 1,
       "ingredients": ["1", "2"]
     },
-    "name": "testName"
+    "name": "meow meo"
   }

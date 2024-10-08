@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Burger Constructor Testing', () => {
   const bunPlaceholderText = 'Выберите булки';
   const fillingPlaceholderText = 'Выберите начинку';

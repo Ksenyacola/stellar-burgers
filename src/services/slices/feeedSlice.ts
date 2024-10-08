@@ -4,9 +4,9 @@ import { TOrder, TIngredient } from '@utils-types';
 import { RootState } from '../store';
 
 export const fetchFeeds = createAsyncThunk<
-  { success: boolean; total: number; totalToday: number; orders: TOrder[] }, // Тип возвращаемых данных
-  void, // Тип аргументов
-  { rejectValue: string } // Тип ошибки, возвращаемой при reject
+  { success: boolean; total: number; totalToday: number; orders: TOrder[] },
+  void,
+  { rejectValue: string }
 >('feeds/fetchFeeds', async (_, { rejectWithValue }) => {
   try {
     const response = await getFeedsApi();
@@ -72,8 +72,8 @@ export const feedsSlice = createSlice({
         state.order = action.payload.orders[0];
       })
       .addCase(getOrderByNumber.rejected, (state, action) => {
+        state.error = action.error.message || 'Ошибка загрузки заказа';
         state.isLoading = false;
-        state.error = action.error.message;
       });
   }
 });

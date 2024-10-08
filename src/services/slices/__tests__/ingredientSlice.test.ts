@@ -45,8 +45,12 @@ describe('тесты загрузки ингредиентов', () => {
       fetchIngredients.fulfilled(testData, '')
     );
     expect(actualState).toEqual({
+      ...initialState,
       ingredients: testData,
-      loading: false,
+      buns: testData.filter((item) => item.type === 'bun'),
+      mains: [],
+      sauces: [],
+      isLoading: false,
       error: null
     });
   });

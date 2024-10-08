@@ -80,11 +80,20 @@ describe('тесты загрузки заказов по номеру', () => {
   });
 
   it('проверка состояния при ошибке получения данных (rejected)', () => {
-    const actualState = feedsSlice(
-      { ...initialState, isLoading: true },
-      getOrderByNumber.rejected(null, 'testError', 0)
+    const action = getOrderByNumber.rejected(
+      new Error('testError'),
+      'requestId',
+      0
     );
-    expect(actualState).toEqual({ ...initialState, error: 'testError' });
+    const actualState = feedsSlice(initialState, action);
+    expect(actualState).toEqual({
+      ...initialState,
+      error: 'testError',
+      isLoading: false,
+      order: null,
+      orders: [],
+      total: 0
+    });
   });
 
   it('проверка состояния при успешном получении данных (fulfilled)', () => {

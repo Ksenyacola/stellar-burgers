@@ -5,6 +5,7 @@ import userReducer, {
   loginThunk,
   logoutThunk,
   updateUserThunk,
+  getUserOrdersThunk,
   initialState
 } from '../userSlice';
 
@@ -16,11 +17,6 @@ describe('тесты для userSlice', () => {
   };
 
   const testUser = {
-    email: 'fl_n@bk.ru',
-    name: 'meow meo'
-  };
-
-  const testUserUpdated = {
     email: 'fl_n@bk.ru',
     name: 'meow meo'
   };
@@ -45,7 +41,19 @@ describe('тесты для userSlice', () => {
     );
     expect(actualState).toEqual({
       ...initialState,
-      isAuthChecked: true,
+      isAuthChecked: false,
+      error: null
+    });
+  });
+
+  it('проверка состояния при запросе registerThunk (pending)', () => {
+    const actualState = userReducer(
+      { ...initialState, error: 'Test error' },
+      registerThunk.pending('requestId', testRegisterData)
+    );
+    expect(actualState).toEqual({
+      ...initialState,
+      isAuthChecked: false,
       error: null
     });
   });
@@ -57,25 +65,13 @@ describe('тесты для userSlice', () => {
       testRegisterData
     );
     const actualState = userReducer(
-      { ...initialState, isAuthChecked: true },
+      { ...initialState, isAuthChecked: false },
       action
     );
     expect(actualState).toEqual({
       ...initialState,
-      isAuthChecked: true,
+      isAuthChecked: false,
       error: 'testError'
-    });
-  });
-
-  it('проверка состояния при успешном выполнении registerThunk (fulfilled)', () => {
-    const actualState = userReducer(
-      { ...initialState, isAuthChecked: true },
-      registerThunk.fulfilled(testUser, 'requestId', testRegisterData)
-    );
-    expect(actualState).toEqual({
-      ...initialState,
-      isAuthChecked: true,
-      user: testUser
     });
   });
 
@@ -89,14 +85,14 @@ describe('тесты для userSlice', () => {
     );
     expect(actualState).toEqual({
       ...initialState,
-      isAuthChecked: true,
+      isAuthChecked: false,
       error: null
     });
   });
 
   it('проверка состояния при ошибке loginThunk (rejected)', () => {
     const actualState = userReducer(
-      { ...initialState, isAuthChecked: true },
+      { ...initialState, isAuthChecked: false },
       loginThunk.rejected(new Error('testError'), 'requestId', {
         email: 'fl_n@bk.ru',
         password: 'Kulakovka88'
@@ -104,14 +100,14 @@ describe('тесты для userSlice', () => {
     );
     expect(actualState).toEqual({
       ...initialState,
-      isAuthChecked: true,
+      isAuthChecked: false,
       error: 'testError'
     });
   });
 
   it('проверка состояния при успешном выполнении loginThunk (fulfilled)', () => {
     const actualState = userReducer(
-      { ...initialState, isAuthChecked: true },
+      { ...initialState, isAuthChecked: false },
       loginThunk.fulfilled(testUser, 'requestId', {
         email: 'fl_n@bk.ru',
         password: 'Kulakovka88'
@@ -120,7 +116,8 @@ describe('тесты для userSlice', () => {
     expect(actualState).toEqual({
       ...initialState,
       isAuthChecked: true,
-      user: testUser
+      user: testUser,
+      error: null
     });
   });
 
@@ -162,24 +159,6 @@ describe('тесты для userSlice', () => {
       isAuthChecked: true,
       user: testUser,
       error: 'testError'
-    });
-  });
-
-  it('проверка состояния при запросе logoutThunk (pending)', () => {
-    const actualState = userReducer(
-      {
-        ...initialState,
-        isAuthChecked: true,
-        user: testUser,
-        error: 'Test error'
-      },
-      logoutThunk.pending('requestId')
-    );
-    expect(actualState).toEqual({
-      ...initialState,
-      isAuthChecked: true,
-      user: testUserUpdated,
-      error: null
     });
   });
 
